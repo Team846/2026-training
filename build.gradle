@@ -1,0 +1,207 @@
+plugins {
+    id "cpp"
+    id "google-test-test-suite"
+    id "edu.wpi.first.GradleRIO" version "2025.3.2"
+    id 'com.diffplug.spotless' version '6.20.0'
+}
+
+// Define my targets (RoboRIO) and artifacts (deployable files)
+deploy {
+    println "Setting up deploy targets and artifacts..."
+    targets {
+        roborio(getTargetTypeClass('RoboRIO')) {
+            team = project.frc.getTeamNumber()
+            debug = project.frc.getDebugOrDefault(false)
+
+            println "Deploy team # set to ${team}."
+            println "Debug set to ${debug} (disabled by default).\n"
+
+
+            artifacts {
+                frcCpp(getArtifactTypeClass('FRCNativeArtifact')) {
+                }
+
+                frcStaticFileDeploy(getArtifactTypeClass('FileTreeArtifact')) {
+                    files = project.fileTree('src/y2025-training/deploy')
+                    directory = '/home/lvuser/deploy'
+
+
+                    // Set deleteOldFiles to true to clear files in deploy/ on RIO that aren't in this project
+                    deleteOldFiles = true  
+                }
+            }
+        }
+    }
+}
+
+def deployArtifact = deploy.targets.roborio.artifacts.frcCpp
+
+// Set this to true to enable desktop support.
+def includeDesktopSupport = true
+
+// Set to true to run simulation in debug mode
+wpi.cpp.debugSimulation = true
+
+// Default enable simgui
+wpi.sim.addGui().defaultEnabled = false
+// Enable DS but not by default
+wpi.sim.addDriverstation()
+
+model {
+    components {
+        frcUserProgram(NativeExecutableSpec) {
+            println "Configuring frcUserProgram..."
+            targetPlatform wpi.platforms.roborio
+            if (includeDesktopSupport) {
+                targetPlatform wpi.platforms.desktop
+                binaries.all {
+                    cppCompiler.args << '-DNOMINMAX'
+                    println "Applied compiler argument NOMINMAX to allow for compilation on Windows platform."
+                }
+            }
+
+            sources.cpp {
+                source {
+                    srcDir 'src/frc846/cpp'
+                    srcDir 'src/y2025-training/cpp'
+                    include '**/*.cpp', '**/*.cc'
+                }
+                exportedHeaders {
+                    srcDir 'src/frc846/include'
+                    srcDir 'src/y2025-training/include'
+                }
+            }
+
+            // Set deploy task to deploy this component
+            deployArtifact.component = it
+
+            // Enable run tasks for this component
+            wpi.cpp.enableExternalTasks(it)
+
+            // Enable simulation for this component
+            wpi.sim.enable(it)
+            // Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
+            wpi.cpp.vendor.cpp(it)
+            wpi.cpp.deps.wpilib(it)
+        }
+    }
+
+    // testSuites {
+    //     frcUserProgramTest(GoogleTestTestSuiteSpec) {
+    //         testing $.components.frcUserProgram
+
+    //         println "Configuring frcUserProgramTest..."
+    //         sources.cpp {
+    //             source {
+    //                 srcDir 'src/test/cpp'
+    //                 include '**/*.cpp'
+    //             }
+    //         }
+    //         binaries.all {
+    //             cppCompiler.args << '-DNOMINMAX'
+    //             println "Applied compiler argument NOMINMAX to allow for compilation on Windows platform."
+    //         }
+    //         wpi.cpp.enableExternalTasks(it)
+    //         wpi.cpp.vendor.cpp(it)
+    //         wpi.cpp.deps.wpilib(it)
+    //         wpi.cpp.deps.googleTest(it)
+    //     }
+    // }
+}
+
+// spotless {
+//     cpp {
+//         target fileTree('.') {
+//             include '**/*.cpp', '**/*.cc', '**/*.h', '**/*.hpp'
+//             exclude '**/build/**', '**/build-*/**'
+//         }
+//         def selectedClangVersion = project.hasProperty('fromCI') ? '18.1.8' : '18.1.8'
+
+//         def styleFile = file('.clang-format')
+//         def styleConfig = styleFile.text.trim()
+
+//         clangFormat(selectedClangVersion).style(styleConfig)
+//     }
+//     groovyGradle {
+//         target fileTree('src') {
+//             include '**/*.gradle'
+//             exclude '**/build/**', '**/build-*/**'
+//         }
+//         greclipse()
+//         indentWithSpaces(4)
+//         trimTrailingWhitespace()
+//         endWithNewline()
+//     }
+// }
+
+// if (!project.hasProperty('fromCI')) {
+//     spotlessApply
+// }
+// spotlessCppCheck.onlyIf { !project.hasProperty('fromCI') || project.hasProperty('runningSpotlessCpp') }
+
+task runCppcheck(type: Exec) {
+    def outputBuffer = new ByteArrayOutputStream()
+
+    if (project.hasProperty('runningCppCheckTest')) {
+        println "Running cppcheck in CI mode - will fail on critical issues or too many warnings."
+    }
+
+    commandLine 'cppcheck', '--enable=all', '--template=gcc',
+        '--force', '--suppress=missingIncludeSystem', '--suppress=missingInclude', '--check-level=exhaustive', 'src/'
+    
+    
+    standardOutput = outputBuffer
+    errorOutput = outputBuffer
+    doLast {
+        def cppcheckOutput = outputBuffer.toString("UTF-8")
+        def warnings = cppcheckOutput.readLines().findAll { it.contains("warning") && !it.contains("nofile:") }
+        def reportContent = warnings.isEmpty() ? "No warnings or errors found." : warnings.join("\n")
+
+         def criticalWarnings = cppcheckOutput.readLines().findAll {
+            it.contains("error") ||
+            it.contains("nullPointer") ||    
+            it.contains("uninitVar") ||     
+            it.contains("outOfBounds") ||    
+            it.contains("divideByZero") ||  
+            it.contains("unreachableCode") ||
+            it.contains("memoryLeak") ||    
+            it.contains("useAfterFree") ||   
+            it.contains("doubleFree") ||    
+            it.contains("invalidMemcpy") ||  
+            it.contains("undefinedFunction") || 
+            it.contains("invalidInput") ||   
+            it.contains("invalidPointer")    
+        }
+        println "\nCppcheck output:\n\n${cppcheckOutput}"
+        println "Cppcheck completed. Total warnings: ${warnings.size()}. Critical issues: ${criticalWarnings.size()}."
+
+        
+        if (criticalWarnings.size() > 0 || warnings.size() > 15) {
+            println "Critical issues detected:\n${criticalWarnings.join('\n')}"
+
+            if (project.hasProperty('runningCppCheckTest')) {
+                throw new GradleException("Cppcheck failed with critical issues or too many warnings.")
+            } else {
+                println "Cppcheck failed with critical issues or too many warnings."
+            }
+        }
+
+        def cppcheckSection = "## CppCheck Warnings\n```\n${reportContent.replaceAll('\\\\', '/').trim()}\n```"
+
+        def readmeFile = file('README.md')
+        def readmeContent = readmeFile.text.trim()
+
+        if (readmeContent.contains("## CppCheck Warnings")) {
+            readmeContent = readmeContent.substring(0, readmeContent.indexOf("## CppCheck Warnings")).trim()
+        }
+
+        readmeFile.text = readmeContent + "\n\n" + cppcheckSection
+    }
+}
+
+runCppcheck.onlyIf { !project.hasProperty('fromCI') }
+
+// if (!project.hasProperty('fromCI')) {
+//     check.dependsOn runCppcheck
+//     runCppcheck.dependsOn spotlessApply
+// }
