@@ -1,4 +1,4 @@
-# 2025 Training
+# 2026 Training
 
 ## General Project Structure
 
@@ -32,10 +32,10 @@ graph TD
 ### --Downloads--
 
 #### WPILib Tools
-- Download WPILib tools and WPILib VSCode. Attached are links for versions 2025.3.2.
-    - [2025.3.2 WINDOWS](https://packages.wpilib.workers.dev/installer/v2025.3.2/Win64/WPILib_Windows-2025.3.2.iso)
-    - [2025.3.2 MACOS ARM](https://packages.wpilib.workers.dev/installer/v2025.3.2/macOSArm/WPILib_macOS-Arm64-2025.3.2.dmg)
-    - [2025.3.2 MACOS INTEL](https://packages.wpilib.workers.dev/installer/v2025.3.2/macOS/WPILib_macOS-Intel-2025.3.2.dmg)
+- Download WPILib tools and WPILib VSCode. Attached are links for versions 2026.2.1.
+    - [2026.2.1 WINDOWS](https://packages.wpilib.workers.dev/installer/v2026.2.1/Win64/WPILib_Windows-2026.2.1.iso)
+    - [2026.2.1 MACOS ARM](https://packages.wpilib.workers.dev/installer/v2026.2.1/macOSArm/WPILib_macOS-Arm64-2026.2.1.dmg)
+    - [2026.2.1 MACOS INTEL](https://packages.wpilib.workers.dev/installer/v2026.2.1/macOS/WPILib_macOS-Intel-2026.2.1.dmg)
 - Once downloaded, double click on the file. By default, it will be saved in the downloads folder.
 - Run the .exe file inside of it. It should be called "WPILib Installer".
 - Go through the default setup process.
@@ -69,10 +69,10 @@ If unfamiliar with GitHub, go through tutorials in the [Using Git](#using-git) s
 
 ### --Setup--
 - Clone the repository.
-    - Run: ```git clone https://github.com/Team846/2025-training.git``` in terminal.
+    - Run: ```git clone https://github.com/Team846/2026-training.git``` in terminal.
 - Open WPILib VSCode
 - In WPILib VSCode, open the folder containing the cloned repository.
-    - The path will be ```path the clone command was run in + howler_monkey```
+    - The path will be ```path the clone command was run in + 2026-training```
 - DO NOT change the gradle file. If WPILib VSCode prompts an update to the gradle file, click CANCEL.
 - Click on the WPILib icon (the W in the top right corner).
 - In the dropdown list, click on ```C++: Refresh C++ Intellisense```.
@@ -93,7 +93,7 @@ Select x64 or arm depending on your chip. If using an Apple Silicon (M1,M2, etc.
 
 Ignore the LLVM section.
 
-- [WPILib 2025.3.2](https://github.com/wpilibsuite/allwpilib/releases/tag/v2025.3.2).
+- [WPILib 2026.2.1](https://github.com/wpilibsuite/allwpilib/releases/tag/v2026.2.1)
 - [git-scm](https://git-scm.com/download/mac).
 - Clang-format: ```brew install clang-format```
 - CppCheck: ```brew install cppcheck```
@@ -101,7 +101,7 @@ Ignore the LLVM section.
 
 ### --Setup--
 
-WPILib VSCode is installed in a hard-to-find directory on MacOS. It is usually located in ~/wpilib/202x/vscode/ and is called "Visual Studio Code". For example it can be located in /Users/funkymonkey/wpilib/2025/vscode. If you need help finding it, ask someone who has previously installed WPILib VSCode on MacOS.
+WPILib VSCode is installed in a hard-to-find directory on MacOS. It is usually located in ~/wpilib/202x/vscode/ and is called "Visual Studio Code". For example it can be located in /Users/funkymonkey/wpilib/2026/vscode. If you need help finding it, ask someone who has previously installed WPILib VSCode on MacOS.
 
 It is a good idea to rename the file or move it into your Applications folder and pin it in dock for easy access and differentiation from normal VSCode.
 
