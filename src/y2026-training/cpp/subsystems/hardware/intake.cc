@@ -45,10 +45,10 @@ bool IntakeSubsystem::VerifyHardware() {
 }
 
 IntakeReadings IntakeSubsystem::ReadFromHardware() {
-  Graph("readings/position", esc_helper_.GetPosition());
+  Graph("readings/position", position of the intake);
   // What readings do you need for PID? only do P and D
   // position is one... whats the other one?
-  return {esc_helper_.GetPosition()};
+  return {};
 }
 
 void IntakeSubsystem::WriteToHardware(IntakeTarget target) {
@@ -56,7 +56,7 @@ void IntakeSubsystem::WriteToHardware(IntakeTarget target) {
   // change this to use PID using the readings and the target
   // Remember PID = k_P * (position_error) - k_D * (velocity)
   // Remember to tune the value of k_P you can use use the prefrence...  GetPreferenceValue_double("k_p")
-  double duty_cycle = GetPreferenceValue_double("k_p") * (target.target_position_ - readings.position_).to<double>();
+  double duty_cycle = pid here;
 
   Graph("target/dc", duty_cycle);
   esc_helper_.WriteDC(duty_cycle);

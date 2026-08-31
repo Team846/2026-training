@@ -24,8 +24,8 @@ void FunkyRobot::InitTeleop() {
   frc2::Trigger to_0deg_trigger{
       [&] { return xbox_controller_.GetRightTriggerAxis() > 0.5; }};
 
-  to_0deg_trigger.OnTrue(IntakeCommand{container_, 0_deg}.ToPtr());
-  to_360deg_trigger.OnTrue(IntakeCommand{container_, 360_deg}.ToPtr());
+  to_0deg_trigger.OnTrue(finish this... what does the command take in?);
+  to_360deg_trigger.OnTrue(finish this... what does the command take in?);
 }
 
 void FunkyRobot::OnPeriodic() {}

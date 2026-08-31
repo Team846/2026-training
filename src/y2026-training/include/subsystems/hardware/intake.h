@@ -14,7 +14,7 @@
 #include "frc846/robot/GenericSubsystem.h"
 
 struct IntakeReadings {
-    units::degree_t position_;
+    // what readings do you need?
 };
 
 struct IntakeTarget {
