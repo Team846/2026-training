@@ -18,5 +18,4 @@ class LEDsCommand
 
  private:
   //do you need anything here to be able to blink it?
-  int loops = 0;
 };

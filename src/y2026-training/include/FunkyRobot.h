@@ -4,7 +4,6 @@
 
 #include "frc846/robot/GenericRobot.h"
 #include "subsystems/robot_container.h"
-#include "commands/leds_command.h"
 
 class FunkyRobot : public frc846::robot::GenericRobot {
 public:
@@ -20,6 +19,5 @@ public:
   void InitTest() override;
 
 private:
-  int teleopLoops = 0;
   RobotContainer container_;
 };
