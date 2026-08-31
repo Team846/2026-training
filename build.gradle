@@ -1,7 +1,7 @@
 plugins {
     id "cpp"
     id "google-test-test-suite"
-    id "edu.wpi.first.GradleRIO" version "2025.3.2"
+    id "edu.wpi.first.GradleRIO" version "2026.2.1"
     id 'com.diffplug.spotless' version '6.20.0'
 }
 
@@ -22,7 +22,7 @@ deploy {
                 }
 
                 frcStaticFileDeploy(getArtifactTypeClass('FileTreeArtifact')) {
-                    files = project.fileTree('src/y2025-training/deploy')
+                    files = project.fileTree('src/y2026-training/deploy')
                     directory = '/home/lvuser/deploy'
 
 
@@ -63,12 +63,12 @@ model {
             sources.cpp {
                 source {
                     srcDir 'src/frc846/cpp'
-                    srcDir 'src/y2025-training/cpp'
+                    srcDir 'src/y2026-training/cpp'
                     include '**/*.cpp', '**/*.cc'
                 }
                 exportedHeaders {
                     srcDir 'src/frc846/include'
-                    srcDir 'src/y2025-training/include'
+                    srcDir 'src/y2026-training/include'
                 }
             }
 
