@@ -21,6 +21,7 @@ void FunkyRobot::InitTeleop() {}
 
 void FunkyRobot::OnPeriodic() {
   // container_.leds_.SetTarget(.......);
+  // container_.leds_.GetReadings().......;
 }
 
 void FunkyRobot::InitTest() {}

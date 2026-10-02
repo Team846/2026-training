@@ -17,8 +17,7 @@ LEDsTarget LEDsSubsystem::ZeroTarget() const {
 bool LEDsSubsystem::VerifyHardware() { return true; }
 
 LEDsReadings LEDsSubsystem::ReadFromHardware() {
-  // Are there any readings?
-  return {};
+  // Are there any readings/updates you need each loop?
 }
 
 void LEDsSubsystem::WriteToHardware(LEDsTarget target) {
@@ -27,7 +26,15 @@ void LEDsSubsystem::WriteToHardware(LEDsTarget target) {
     leds_buffer_[i].SetRGB(0, 0, 0);
   }
 
-  // Use target.state to change the LEDs
+  // Decide what to set the LEDS to based on target.state 
 
   leds_.SetData(leds_buffer_);  // DO NOT REMOVE
+
+  //DO NOT REMOVE, NEEDED FOR SIMULATION
+
+  std::vector<double> rgb;
+  for (const auto& led : leds_buffer_){
+    rgb.insert(rgb.end(), {double(led.r), double(led.g), double(led.b)});
+  }
+  frc::SmartDashboard::PutNumberArray(name() + "/leds_rgb", rgb);
 }

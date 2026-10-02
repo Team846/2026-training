@@ -7,11 +7,12 @@
 enum LEDsState {
   kExampleStateOne,
   kExampleStateTwo,
+  // Choose the colors/states you want your LEDS to reach
   // TODO: Fix
 };
 
 struct LEDsReadings {
-  // Are there any?
+  // Think of what you want to know about your LEDS (do you need the current color, time passed, loops passed?)
   // TODO: Fix
 };
 
